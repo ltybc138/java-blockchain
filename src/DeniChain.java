@@ -4,11 +4,11 @@ public class DeniChain {
         System.out.println("Hash for block 1 is : " + firstBlock.hash);
 
 
-        Block secondBlock = new Block("Second block", "0");
+        Block secondBlock = new Block("Second block", firstBlock.hash);
         System.out.println("Hash for block 2 is : " + secondBlock.hash);
 
 
-        Block thirdBlock = new Block("Third block", "0");
+        Block thirdBlock = new Block("Third block", secondBlock.hash);
         System.out.println("Hash for block 3 is : " + thirdBlock.hash);
     }
 }
