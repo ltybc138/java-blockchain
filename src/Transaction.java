@@ -25,6 +25,69 @@ public class Transaction {
         this.inputs = inputs;
     }
 
+    public boolean processTransaction() {
+        if (!verifySignature()) {
+            System.out.println("#Transaction signature is not verified");
+            return false;
+        }
+
+        // gather transaction inputs (Make sure they are not unspent)
+        for (TransactionInput i : inputs) {
+            i.UTXO = DeniChain.UTXOs.get(i.transactionOutputId);
+        }
+
+        // check if transaction is valid
+        if (getInputsValue() < DeniChain.minimumTransaction) {
+            System.out.println("#Transaction inputs too small: " + getInputsValue());
+            return false;
+        }
+
+        // generate transaction outputs
+        float leftOver = getInputsValue() - value;
+        transactionId = calculateHash();
+        // send value to recipient
+        outputs.add(new TransactionOutput(this.reciepient, value, transactionId));
+        // send the left over 'change' to sender
+        outputs.add(new TransactionOutput(this.sender, leftOver, transactionId));
+
+        // add outputs to unspent list
+        for (TransactionOutput o : outputs) {
+            DeniChain.UTXOs.put(o.id, o);
+        }
+
+        // remove transaction inputs from UTXO lists as spent
+        for (TransactionInput i : inputs) {
+            // if transaction can't be found
+            if (i.UTXO == null) {
+                continue;
+            }
+            DeniChain.UTXOs.remove(i.UTXO.id);
+        }
+        return true;
+    }
+
+    // returns sum of inputs(UTXOs) values
+    public float getInputsValue() {
+        float total = 0;
+        for (TransactionInput i : inputs) {
+            // if transaction can't be found
+            if (i.UTXO == null) {
+                continue;
+            }
+            total += i.UTXO.value;
+        }
+        return total;
+    }
+
+    // returns sum of outputs
+    public float getOutputsValue() {
+        float total = 0;
+        for (TransactionOutput o : outputs) {
+            total += o.value;
+        }
+        return total;
+    }
+
     private String calculateHash() {
         sequence++;
         return StringUtil.applySha256(

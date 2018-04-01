@@ -1,5 +1,6 @@
 import java.io.UnsupportedEncodingException;
 import java.security.*;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class StringUtil {
@@ -65,5 +66,30 @@ public class StringUtil {
 
     public static String getStringFromKey(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
+    }
+
+    // tacks in array of transactions and return a Merkle root
+    public static String getMerkleRoot(ArrayList<Transaction> transactions) {
+        int count = transactions.size();
+        ArrayList<String> previousTreeLayer = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            previousTreeLayer.add(transaction.transactionId);
+        }
+
+        ArrayList<String> treeLayer = previousTreeLayer;
+        while (count > 1) {
+            treeLayer = new ArrayList<>();
+            for (int i = 1; i < previousTreeLayer.size(); i++) {
+                treeLayer.add(applySha256(previousTreeLayer.get(i - 1) + previousTreeLayer.get(i)));
+            }
+            count = treeLayer.size();
+            previousTreeLayer = treeLayer;
+        }
+        String merkleRoot = (treeLayer.size() == 1) ? treeLayer.get(0) : "";
+        return merkleRoot;
+    }
+
+    public static String getDifficultyString(int difficulty) {
+        return new String(new char[difficulty]).replace('\0', '0');
     }
 }
