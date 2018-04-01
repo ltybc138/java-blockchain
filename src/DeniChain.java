@@ -1,8 +1,10 @@
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 
 public class DeniChain {
     public static ArrayList<Block> blocks = new ArrayList<>();
-    public static int difficulty = 6;
+    public static int difficulty = 2;
     public static void main(String[] args) {
         long timeStart = System.currentTimeMillis();
         blocks.add(new Block("First block", "0"));
@@ -22,7 +24,13 @@ public class DeniChain {
 //        for (Block block : blocks) {
 //            System.out.println("Hash for block " + (c++) + " : " + block.hash);
 //        }
+
+        // generate json file from our blockchain
+        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blocks);
         System.out.println("Mining all blocks took : " + (System.currentTimeMillis() - timeStart) + " millis");
+        System.out.println("\n\n");
+
+        System.out.println(blockchainJson);
     }
 
     public static boolean isChainValid() {
