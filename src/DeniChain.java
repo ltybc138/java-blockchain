@@ -1,11 +1,43 @@
 import com.google.gson.GsonBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import javax.xml.transform.TransformerException;
+import java.security.Security;
 import java.util.ArrayList;
 
 public class DeniChain {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static int difficulty = 2;
+    public static Wallet walletA;
+    public static Wallet walletB;
+
     public static void main(String[] args) {
+//        testBlockchain();
+        testWallet();
+    }
+
+    public static void testWallet() {
+        // setting up a security provider
+        Security.addProvider(new BouncyCastleProvider());
+
+        // creating new wallets
+        walletA = new Wallet();
+        walletB = new Wallet();
+
+        // test private and public keys
+        System.out.println("Private and public keys: ");
+        System.out.println("private key : " + StringUtil.getStringFromKey(walletA.privateKey));
+        System.out.println("public key : " + StringUtil.getStringFromKey(walletA.publicKey));
+
+        // make a test transaction from walletA to walletB
+        Transaction transaction = new Transaction(walletA.publicKey, walletB.publicKey, 5, null);
+        transaction.generateSignature(walletA.privateKey);
+
+        // verify the signature works and verify it from the public key
+        System.out.println("Is signature verified: " + transaction.verifySignature());
+    }
+
+    public static void testBlockchain() {
         long timeStart = System.currentTimeMillis();
         blocks.add(new Block("First block", "0"));
         System.out.println("Trying to mine block 1... ");

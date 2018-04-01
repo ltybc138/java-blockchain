@@ -1,6 +1,6 @@
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.util.Base64;
 
 public class StringUtil {
 
@@ -20,5 +20,50 @@ public class StringUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static byte[] applyECDSASig(PrivateKey privateKey, String input) {
+        Signature dsa;
+        byte[] output = new byte[0];
+
+        try {
+            dsa = Signature.getInstance("ECDSA", "BC");
+            dsa.initSign(privateKey);
+            byte[] strByte = input.getBytes();
+            dsa.update(strByte);
+            byte[] realSig = dsa.sign();
+            output = realSig;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
+    public static boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature) {
+        try {
+            Signature ecdsaVerify = Signature.getInstance("ECDSA", "BC");
+            ecdsaVerify.initVerify(publicKey);
+            ecdsaVerify.update(data.getBytes());
+            return ecdsaVerify.verify(signature);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (SignatureException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getStringFromKey(Key key) {
+        return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 }
