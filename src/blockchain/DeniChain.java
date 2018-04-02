@@ -1,4 +1,6 @@
-import com.google.gson.GsonBuilder;
+package blockchain;
+
+import interfaces.impls.LocalDataStorage;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
@@ -10,17 +12,18 @@ public class DeniChain {
     // list of all unspent transactions
     public static HashMap<String, TransactionOutput> UTXOs = new HashMap<>();
 
-    public static int difficulty = 5;
+    public static int difficulty = 3;
     public static float minimumTransaction = 0.1f;
-    public static Wallet walletA;
-    public static Wallet walletB;
-    public static Transaction genesisTransaction;
+    private static Wallet walletA;
+    private static Wallet walletB;
+    private static Transaction genesisTransaction;
 
     public static void main(String[] args) {
         testWallet();
+        saveData();
     }
 
-    public static void testWallet() {
+    private static void testWallet() {
         // setting up a security provider
         Security.addProvider(new BouncyCastleProvider());
 
@@ -66,7 +69,12 @@ public class DeniChain {
         isChainValid();
     }
 
-    public static boolean isChainValid() {
+    private static void saveData() {
+        LocalDataStorage storage = new LocalDataStorage();
+        storage.save(blocks);
+    }
+
+    private static boolean isChainValid() {
         Block currentBlock;
         Block previousBlock;
         String hashTarget = new String(new char[difficulty]).replace('\0', '0');
@@ -102,12 +110,12 @@ public class DeniChain {
                 Transaction currentTransaction = currentBlock.transactions.get(t);
 
                 if (!currentTransaction.verifySignature()) {
-                    System.out.println("#Signature of Transaction(" + t + ") is invalid");
+                    System.out.println("#Signature of blockchain.Transaction(" + t + ") is invalid");
                     return false;
                 }
 
                 if (currentTransaction.getInputsValue() != currentTransaction.getOutputsValue()) {
-                    System.out.println("#Inputs are not equal to outputs on Transaction(" + t + ")");
+                    System.out.println("#Inputs are not equal to outputs on blockchain.Transaction(" + t + ")");
                     return false;
                 }
 
@@ -115,12 +123,12 @@ public class DeniChain {
                     tempOutput = tempUTXOs.get(input.transactionOutputId);
 
                     if (tempOutput == null) {
-                        System.out.println("#Referenced input on Transaction(" + t + ") is Missing");
+                        System.out.println("#Referenced input on blockchain.Transaction(" + t + ") is Missing");
                         return false;
                     }
 
                     if (input.UTXO.value != tempOutput.value) {
-                        System.out.println("#Referanced input on Transaction(" + t + ") is Invalid");
+                        System.out.println("#Referanced input on blockchain.Transaction(" + t + ") is Invalid");
                         return false;
                     }
 
@@ -132,12 +140,12 @@ public class DeniChain {
                 }
 
                 if (currentTransaction.outputs.get(0).reciepient != currentTransaction.reciepient) {
-                    System.out.println("#Transaction("+ t + ") output reciepient is not whi it should be.");
+                    System.out.println("#blockchain.Transaction("+ t + ") output reciepient is not whi it should be.");
                     return false;
                 }
 
                 if (currentTransaction.outputs.get(1).reciepient != currentTransaction.sender) {
-                    System.out.println("#Transaction(" + t + ") output 'change' is not sender.");
+                    System.out.println("#blockchain.Transaction(" + t + ") output 'change' is not sender.");
                     return false;
                 }
             }
@@ -146,7 +154,7 @@ public class DeniChain {
         return true;
     }
 
-    public static void addBlock(Block block) {
+    private static void addBlock(Block block) {
         block.mineBlock(difficulty);
         blocks.add(block);
     }

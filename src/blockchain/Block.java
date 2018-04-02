@@ -1,3 +1,5 @@
+package blockchain;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -35,7 +37,7 @@ public class Block {
             nonce++;
             hash = calculatedHash();
         }
-        System.out.println("Block mined!!! : " + hash);
+        System.out.println("blockchain.Block mined!!! : " + hash);
     }
 
     public boolean addTransaction(Transaction transaction) {
@@ -44,12 +46,12 @@ public class Block {
             return false;
         if (!previousHash.equals("0")) {
             if (!transaction.processTransaction()) {
-                System.out.println("#Transaction failed to process. Discarded.");
+                System.out.println("#blockchain.Transaction failed to process. Discarded.");
                 return false;
             }
         }
         transactions.add(transaction);
-        System.out.println("Transaction successfully added to block");
+        System.out.println("blockchain.Transaction successfully added to block");
         return true;
     }
 }

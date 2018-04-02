@@ -1,3 +1,5 @@
+package blockchain;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ public class Transaction {
     // this is some kind of protection of our wallet
     public byte[] signature;
 
-    public ArrayList<TransactionInput> inputs = new ArrayList<>();
+    public ArrayList<TransactionInput> inputs;
     public ArrayList<TransactionOutput> outputs = new ArrayList<>();
 
     // a count of how many transactions have been generated
@@ -27,7 +29,7 @@ public class Transaction {
 
     public boolean processTransaction() {
         if (!verifySignature()) {
-            System.out.println("#Transaction signature is not verified");
+            System.out.println("#blockchain.Transaction signature is not verified");
             return false;
         }
 
@@ -38,7 +40,7 @@ public class Transaction {
 
         // check if transaction is valid
         if (getInputsValue() < DeniChain.minimumTransaction) {
-            System.out.println("#Transaction inputs too small: " + getInputsValue());
+            System.out.println("#blockchain.Transaction inputs too small: " + getInputsValue());
             return false;
         }
 

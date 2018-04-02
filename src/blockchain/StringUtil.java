@@ -1,4 +1,5 @@
-import java.io.UnsupportedEncodingException;
+package blockchain;
+
 import java.security.*;
 import java.util.ArrayList;
 import java.util.Base64;

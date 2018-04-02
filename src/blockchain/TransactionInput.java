@@ -1,5 +1,7 @@
+package blockchain;
+
 public class TransactionInput {
-    // TransactionOutput -> transactionId
+    // blockchain.TransactionOutput -> transactionId
     public String transactionOutputId;
     // contains the Unspent transaction output;
     public TransactionOutput UTXO;
