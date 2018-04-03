@@ -19,8 +19,14 @@ public class DeniChain {
     private static Transaction genesisTransaction;
 
     public static void main(String[] args) {
-        testWallet();
-        saveData();
+//        testWallet();
+//        testSaveData();
+        testDeleteAllData();
+    }
+
+    private static void testDeleteAllData() {
+        LocalDataStorage dataStorage = new LocalDataStorage();
+        dataStorage.deleteAllData();
     }
 
     private static void testWallet() {
@@ -69,7 +75,7 @@ public class DeniChain {
         isChainValid();
     }
 
-    private static void saveData() {
+    private static void testSaveData() {
         LocalDataStorage storage = new LocalDataStorage();
         storage.save(blocks);
     }
